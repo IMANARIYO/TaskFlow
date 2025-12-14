@@ -1,10 +1,12 @@
+enum TaskStatus { pending, inProgress, completed }
+
 class Task {
   final String id;
   final String title;
   final String description;
   final DateTime createdAt;
   final DateTime dueDate;
-  final bool completed;
+  final TaskStatus status;
 
   const Task({
     required this.id,
@@ -12,14 +14,14 @@ class Task {
     required this.description,
     required this.createdAt,
     required this.dueDate,
-    required this.completed,
+    required this.status,
   });
 
   Task copyWith({
     String? title,
     String? description,
     DateTime? dueDate,
-    bool? completed,
+    TaskStatus? status,
   }) {
     return Task(
       id: id,
@@ -27,7 +29,7 @@ class Task {
       description: description ?? this.description,
       createdAt: createdAt,
       dueDate: dueDate ?? this.dueDate,
-      completed: completed ?? this.completed,
+      status: status ?? this.status,
     );
   }
 }

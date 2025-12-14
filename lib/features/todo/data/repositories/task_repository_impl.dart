@@ -1,7 +1,6 @@
 import 'package:task_flow/features/todo/data/repositories/task_repository.dart';
 
 import '../../domain/entities/task.dart';
-
 import '../datasources/task_local_datasource.dart';
 import '../models/task_model.dart';
 
@@ -13,7 +12,11 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<List<Task>> getTasks() async {
     final models = await localDatasource.getTasks();
-    return models; // TaskModel extends Task, so this works
+    print('Loaded tasks from local storage:');
+    for (var task in models) {
+      print('- ${task.id}: ${task.title} [${task.status}] due ${task.dueDate}');
+    }
+    return models; // TaskModel extends Task
   }
 
   @override
@@ -39,6 +42,16 @@ class TaskRepositoryImpl implements TaskRepository {
     await localDatasource.saveTasks(tasks);
   }
 
+  @override
+  Future<void> seedIfEmpty(List<Task> seedData) async {
+    final tasks = await localDatasource.getTasks();
+    if (tasks.isEmpty) {
+      // Add seed data if the database is empty
+      final seedModels = seedData.map((task) => _toModel(task)).toList();
+      await localDatasource.saveTasks(seedModels);
+    }
+  }
+
   TaskModel _toModel(Task task) {
     return TaskModel(
       id: task.id,
@@ -46,7 +59,7 @@ class TaskRepositoryImpl implements TaskRepository {
       description: task.description,
       createdAt: task.createdAt,
       dueDate: task.dueDate,
-      completed: task.completed,
+      status: task.status, // updated to TaskStatus
     );
   }
 }

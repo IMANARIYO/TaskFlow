@@ -7,7 +7,7 @@ class TaskModel extends Task {
     required super.description,
     required super.createdAt,
     required super.dueDate,
-    required super.completed,
+    required super.status,
   });
 
   factory TaskModel.fromMap(Map<String, dynamic> map) {
@@ -17,7 +17,7 @@ class TaskModel extends Task {
       description: map['description'],
       createdAt: DateTime.parse(map['createdAt']),
       dueDate: DateTime.parse(map['dueDate']),
-      completed: map['completed'],
+      status: TaskStatus.values.byName(map['status']),
     );
   }
 
@@ -28,7 +28,12 @@ class TaskModel extends Task {
       'description': description,
       'createdAt': createdAt.toIso8601String(),
       'dueDate': dueDate.toIso8601String(),
-      'completed': completed,
+      'status': status.name,
     };
+  }
+
+  @override
+  String toString() {
+    return 'TaskModel(id: $id, title: $title, status: $status, dueDate: $dueDate)';
   }
 }
