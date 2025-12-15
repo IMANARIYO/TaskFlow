@@ -43,16 +43,23 @@ class TaskTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: ListTile(
         onTap: onTap,
-        title: Text(task.title,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        leading: Icon(
+          Icons.task_alt,
+          color: _getStatusColor(task.status),
+        ),
+        title: Text(
+          task.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
-            Text(task.description),
-            const SizedBox(height: 4),
-            Text("Due: ${task.dueDate.toLocal()}",
-                style: const TextStyle(fontSize: 12)),
+            Text('ID: ${task.id}'),
+            Text('Description: ${task.description}'),
+            Text(
+                'Created: ${task.createdAt.toLocal().toString().split('.')[0]}'),
+            Text('Due: ${task.dueDate.toLocal().toString().split(' ')[0]}'),
           ],
         ),
         trailing: Wrap(
@@ -62,7 +69,7 @@ class TaskTile extends StatelessWidget {
               onTap: onToggleStatus,
               child: Chip(
                 label: Text(_getStatusText(task.status)),
-                backgroundColor: _getStatusColor(task.status).withValues(alpha: 0.2),
+                backgroundColor: _getStatusColor(task.status).withOpacity(0.2),
                 labelStyle: TextStyle(color: _getStatusColor(task.status)),
               ),
             ),

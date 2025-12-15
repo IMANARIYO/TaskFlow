@@ -91,7 +91,7 @@ class _TaskFormState extends State<TaskForm> {
               Expanded(
                 child: Text(_dueDate == null
                     ? 'Select Due Date'
-                    : 'Due: ${_dueDate!.toLocal()}'.split(' ')[1]),
+                    : 'Due: ${_dueDate!.toLocal().toString().split(' ')[0]}'),
               ),
               TextButton(
                 onPressed: _pickDueDate,
