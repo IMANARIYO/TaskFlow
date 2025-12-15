@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:task_flow/features/todo/presentation/screens/create_task_screen.dart';
+import 'package:task_flow/features/todo/presentation/screens/update_task_screen.dart';
 import '../controllers/task_controller.dart';
 import '../widgets/task_tile.dart';
-import '../widgets/task_form.dart';
 import '../../domain/entities/task.dart';
 
 class TaskListScreen extends StatefulWidget {
@@ -26,46 +27,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
   void _navigateToCreateTask() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(title: const Text('Create Task')),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TaskForm(
-              onSubmit: (title, description, dueDate) {
-                context
-                    .read<TaskController>()
-                    .addTask(title, description, dueDate);
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ),
-      ),
+      MaterialPageRoute(builder: (_) => const CreateTaskScreen()),
     );
   }
 
   void _navigateToEditTask(Task task) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(title: const Text('Edit Task')),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TaskForm(
-              initialTitle: task.title,
-              initialDescription: task.description,
-              initialDueDate: task.dueDate,
-              onSubmit: (title, description, dueDate) {
-                context.read<TaskController>().updateTask(task,
-                    title: title, description: description, dueDate: dueDate);
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ),
-      ),
+      MaterialPageRoute(builder: (_) => EditTaskScreen(task: task)),
     );
   }
 

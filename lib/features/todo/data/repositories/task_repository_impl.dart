@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:task_flow/features/todo/data/repositories/task_repository.dart';
 
 import '../../domain/entities/task.dart';
@@ -10,29 +11,78 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskRepositoryImpl(this.localDatasource);
 
   @override
+  @override
   Future<List<Task>> getTasks() async {
     final models = await localDatasource.getTasks();
-    print('Loaded tasks from local storage:');
-    for (var task in models) {
-      print('- ${task.id}: ${task.title} [${task.status}] due ${task.dueDate}');
+
+    // debug prints
+    debugPrint('[Repository] Loaded ${models.length} tasks from local storage');
+
+    // Convert models → entities
+    final tasks = models.map((m) => m.toEntity()).toList();
+
+    for (var t in tasks) {
+      debugPrint('- ${t.id}: ${t.title} [${t.status}] due ${t.dueDate}');
     }
-    return models; // TaskModel extends Task
+
+    return tasks; // ✅ now returning List<Task>
   }
 
   @override
   Future<void> createTask(Task task) async {
-    final tasks = await localDatasource.getTasks();
-    tasks.add(_toModel(task));
-    await localDatasource.saveTasks(tasks);
+    debugPrint('════════════════════════════════════');
+    debugPrint('📌 TaskRepository.createTask');
+    debugPrint('────────────────────────────────────');
+    debugPrint('• Incoming task');
+    debugPrint('  - id     : ${task.id}');
+    debugPrint('  - title  : ${task.title}');
+    debugPrint('  - status : ${task.status.name}');
+    debugPrint('────────────────────────────────────');
+
+    final models = await localDatasource.getTasks();
+
+    debugPrint('• Tasks before add : ${models.length}');
+
+    // Convert entity → model before saving
+    final model = TaskModel.fromEntity(task);
+    models.add(model);
+
+    debugPrint('• Tasks after add  : ${models.length}');
+    debugPrint('• Saving tasks to local storage…');
+
+    await localDatasource.saveTasks(models);
+
+    debugPrint('✅ createTask completed');
+    debugPrint('════════════════════════════════════');
   }
 
   @override
   Future<void> updateTask(Task task) async {
-    final tasks = await localDatasource.getTasks();
-    final index = tasks.indexWhere((t) => t.id == task.id);
-    if (index == -1) return;
-    tasks[index] = _toModel(task);
-    await localDatasource.saveTasks(tasks);
+    debugPrint('════════════════════════════════════');
+    debugPrint('📌 TaskRepository.updateTask');
+    debugPrint('────────────────────────────────────');
+    debugPrint('• Incoming task');
+    debugPrint('  - id     : ${task.id}');
+    debugPrint('  - title  : ${task.title}');
+    debugPrint('  - status : ${task.status.name}');
+    debugPrint('────────────────────────────────────');
+
+    final models = await localDatasource.getTasks();
+    final index = models.indexWhere((t) => t.id == task.id);
+
+    if (index == -1) {
+      debugPrint('⚠️ Task with id ${task.id} not found');
+      return;
+    }
+
+    // Convert entity → model before saving
+    models[index] = TaskModel.fromEntity(task);
+
+    debugPrint('• Saving updated task to local storage…');
+    await localDatasource.saveTasks(models);
+
+    debugPrint('✅ updateTask completed');
+    debugPrint('════════════════════════════════════');
   }
 
   @override

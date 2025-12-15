@@ -1,36 +1,64 @@
-import '../../domain/entities/task.dart';
+import 'package:task_flow/features/todo/domain/entities/task.dart';
 
-class TaskModel extends Task {
+class TaskModel {
+  final String id;
+  final String title;
+  final String description;
+  final DateTime createdAt;
+  final DateTime dueDate;
+  final TaskStatus status;
+
   const TaskModel({
-    required super.id,
-    required super.title,
-    required super.description,
-    required super.createdAt,
-    required super.dueDate,
-    required super.status,
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.createdAt,
+    required this.dueDate,
+    required this.status,
   });
 
-  factory TaskModel.fromMap(Map<String, dynamic> map) {
+  // Convert from Task entity
+  factory TaskModel.fromEntity(Task task) {
     return TaskModel(
-      id: map['id'],
-      title: map['title'],
-      description: map['description'],
-      createdAt: DateTime.parse(map['createdAt']),
-      dueDate: DateTime.parse(map['dueDate']),
-      status: TaskStatus.values.byName(map['status']),
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      createdAt: task.createdAt,
+      dueDate: task.dueDate,
+      status: task.status,
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'createdAt': createdAt.toIso8601String(),
-      'dueDate': dueDate.toIso8601String(),
-      'status': status.name,
-    };
+  // Convert back to Task entity
+  Task toEntity() {
+    return Task(
+      id: id,
+      title: title,
+      description: description,
+      createdAt: createdAt,
+      dueDate: dueDate,
+      status: status,
+    );
   }
+
+  // For JSON / storage
+  factory TaskModel.fromMap(Map<String, dynamic> map) => TaskModel(
+        id: map['id'],
+        title: map['title'],
+        description: map['description'],
+        createdAt: DateTime.parse(map['createdAt']),
+        dueDate: DateTime.parse(map['dueDate']),
+        status: TaskStatus.values.byName(map['status']),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'createdAt': createdAt.toIso8601String(),
+        'dueDate': dueDate.toIso8601String(),
+        'status': status.name,
+      };
 
   @override
   String toString() {
